@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        applicationId "org.herac.tuxguitar"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            lintOptions {
+                abortOnError true
+            }
+        }
+
+        debug {
+            lintOptions {
+                abortOnError false
+            }
+
+        }
+    }
+}
+
+//kapt {
+//    generateStubs true
+//}
+
+ext.supportLibrary = "26.0.1"
+
+dependencies {
+    compile "com.android.support:appcompat-v7:$supportLibrary"
+    compile "com.android.support:design:$supportLibrary"
+
+    compile "com.android.support:support-v4:$supportLibrary"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:2.8.9"
+    // Local dependencies
+    compile project(':TuxGuitar-lib')
+    compile project(':TuxGuitar-editor-utils')
+}
