@@ -7,3 +7,6 @@ build/
 gradle*
 .idea/
 */.idea
+*.iml
+*/*.iml
+local.properties

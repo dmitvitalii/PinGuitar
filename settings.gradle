@@ -1,3 +1,4 @@
 rootProject.name = 'tuxguitar'
 include 'TuxGuitar-lib'
 include 'TuxGuitar-editor-utils'
+include 'TuxGuitar-android'
