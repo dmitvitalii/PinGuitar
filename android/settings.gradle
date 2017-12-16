@@ -1,0 +1,8 @@
+include ':application'
+includeParent('TuxGuitar-lib')
+includeParent('TuxGuitar-editor-utils')
+
+def includeParent (String projectName) {
+    include ":${projectName}"
+    project(":${projectName}").projectDir = new File(settingsDir, "../${projectName}")
+}

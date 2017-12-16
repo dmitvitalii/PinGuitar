@@ -1,6 +1,7 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
 group 'org.herac.tuxguitar'
 version 'SNAPSHOT'
-apply plugin: 'java-library'
 
 repositories {
     jcenter()
