@@ -1,4 +1,5 @@
 include ':application'
+include ':browser-saf'
 includeParent('TuxGuitar-lib')
 includeParent('TuxGuitar-editor-utils')
 

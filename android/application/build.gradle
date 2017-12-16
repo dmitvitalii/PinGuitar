@@ -41,8 +41,6 @@ kapt {
     generateStubs true
 }
 
-ext.supportLibrary = "26.0.1"
-
 dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibrary"
     implementation "com.android.support:design:$supportLibrary"
