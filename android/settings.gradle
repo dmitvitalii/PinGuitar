@@ -1,9 +1,9 @@
 include ':application'
 include ':browser-saf'
-includeParent('TuxGuitar-lib')
-includeParent('TuxGuitar-editor-utils')
+includeParent ':TuxGuitar-lib'
+includeParent ':TuxGuitar-editor-utils'
 
-def includeParent (String projectName) {
-    include ":${projectName}"
-    project(":${projectName}").projectDir = new File(settingsDir, "../${projectName}")
+def includeParent(String projectName) {
+    include projectName
+    project(projectName).projectDir = new File(settingsDir, projectName.replace(':', '../'))
 }
