@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
-        applicationId "org.herac.tuxguitar.android.browser.saf"
+        // applicationId "org.herac.tuxguitar.android.browser.saf"
     }
 
     buildTypes {
