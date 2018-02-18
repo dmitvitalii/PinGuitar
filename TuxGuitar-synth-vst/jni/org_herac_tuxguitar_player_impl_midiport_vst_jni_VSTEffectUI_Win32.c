@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <tchar.h>
-#include <audioeffectx.h>
+#include <aeffectx.h>
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VSTEffectUI.h"
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VST.h"
 
@@ -223,7 +223,7 @@ LRESULT CALLBACK JNIEffectUI_editorHwndProcess(HWND hwnd, UINT msg, WPARAM wPara
 						height = wRect.bottom - wRect.top;
 						x = ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
 						y = ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
-						SetWindowPos (hwnd, HWND_TOP, x, y, width, height, 0);
+						SetWindowPos (hwnd, HWND_TOPMOST, x, y, width, height, 0);
 					}
 				}
 			}

@@ -143,6 +143,13 @@
 									<destFileName>itext-xmlworker.jar</destFileName>
 									<outputDirectory>${project.build.directory}/${project.finalName}/lib</outputDirectory>
 								</artifactItem>
+								
+								<artifactItem>
+									<groupId>org.apache.commons</groupId>
+									<artifactId>commons-compress</artifactId>
+									<destFileName>commons-compress.jar</destFileName>
+									<outputDirectory>${project.build.directory}/${project.finalName}/lib</outputDirectory>
+								</artifactItem>
 								<!-- /3RD PARTY LIBRARIES -->
 
 								<!-- PLUGINS -->
@@ -357,7 +364,7 @@
 				<module>../native-modules/tuxguitar-jack-linux-x86</module>
 				<module>../native-modules/tuxguitar-oss-linux-x86</module>
 				<module>../native-modules/tuxguitar-fluidsynth-linux-x86</module>
-				<module>../native-modules/tuxguitar-synth-vst-linux-x86</module>
+				<module>../native-modules/tuxguitar-synth-vst-remote-linux-x86</module>
 			</modules>
 
 			<build>
@@ -386,8 +393,9 @@
 											<fileset dir="../native-modules/tuxguitar-fluidsynth-linux-x86/target/build" />
 										</copy>
 										<copy todir="${project.build.directory}/${project.finalName}/">
-											<fileset dir="../native-modules/tuxguitar-synth-vst-linux-x86/target/build" />
+											<fileset dir="../native-modules/tuxguitar-synth-vst-remote-linux-x86/target/build" />
 										</copy>
+										<chmod file="${project.build.directory}/${project.finalName}/vst-client/*.bin" perm="775" />
 										
 										<chmod file="${project.build.directory}/${project.finalName}/lib/*.so" perm="775" />
 										<!-- /PLUGINS FILES -->

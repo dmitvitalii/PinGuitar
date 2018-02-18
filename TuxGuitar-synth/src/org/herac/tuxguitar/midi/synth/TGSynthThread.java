@@ -14,12 +14,14 @@ public class TGSynthThread implements Runnable {
 	public void run() {
 		this.finished = false;
 		
-		TGAudioLine audioLine = new TGAudioLine();
+		TGAudioSync audioSync = new TGAudioSync();
+		TGAudioLine audioLine = new TGAudioLine(this.synthesizer);
 		TGAudioBufferProcessor audioProcessor = new TGAudioBufferProcessor(this.synthesizer);
 		
 		while(this.isRunning()) {
 			audioProcessor.process();
 			audioLine.write(audioProcessor.getBuffer());
+			audioSync.sync();
 		}
 		
 		this.finished = true;

@@ -2,9 +2,7 @@
 #define _Included_org_herac_tuxguitar_player_impl_midiport_vst_jni_VST
 
 #include <jni.h>
-#include <audioeffectx.h>
-
-static JavaVM* JNI_JVM = NULL;
+#include <aeffectx.h>
 
 typedef struct {
 	void* library;
@@ -13,10 +11,7 @@ typedef struct {
 typedef struct {
 	AEffect* effect;
 	int editorOpen;
-	void* editorHandle;
 }JNIEffect;
-
-JavaVM* JNI_GetJVM( void );
 
 VstIntPtr VSTCALLBACK VSTPluginCallback(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float);
 

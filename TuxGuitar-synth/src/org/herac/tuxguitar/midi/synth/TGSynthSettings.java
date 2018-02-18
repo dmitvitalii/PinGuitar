@@ -5,6 +5,9 @@ import org.herac.tuxguitar.util.configuration.TGConfigManager;
 
 public class TGSynthSettings {
 	
+	private static final Integer DEFAULT_AUDIO_BUFFER_SIZE = 10;
+	
+	private static final String AUDIO_BUFFER_SIZE = "synth.audio.buffer.size";
 	private static final String MIDI_PROGRAM_PREFIX = "synth.program";
 	
 	private TGContext context;
@@ -25,20 +28,24 @@ public class TGSynthSettings {
 		this.getConfig().save();
 	}
 	
-	public void loadPrograms(TGSynthesizer synthesizer) {
-		for( int b = 0; b < TGSynthesizer.BANKS_LENGTH ; b ++ ){
-			for( int p = 0 ; p < TGSynthesizer.PROGRAMS_LENGTH ; p ++ ){
+	public void loadPrograms(TGSynthModel synthesizer) {
+		for( int b = 0; b < TGSynthModel.BANKS_LENGTH ; b ++ ){
+			for( int p = 0 ; p < TGSynthModel.PROGRAMS_LENGTH ; p ++ ){
 				loadProgram(synthesizer, b, p);
 			}
 		}
 	}
 	
-	public void loadProgram(TGSynthesizer synthesizer, int bank, int program) {
+	public void loadProgram(TGSynthModel synthesizer, int bank, int program) {
 		String prefix = (MIDI_PROGRAM_PREFIX + "." + bank + "." + program);
 		
 		TGProgram tgProgram = TGProgramPropertiesUtil.getProgram(this.getConfig().getProperties(), prefix);
 		if( tgProgram != null ) {
 			synthesizer.getProgram(bank, program).copyFrom(tgProgram);
 		}
+	}
+	
+	public Integer getAudioBufferSize() {
+		return this.getConfig().getIntegerValue(AUDIO_BUFFER_SIZE, DEFAULT_AUDIO_BUFFER_SIZE);
 	}
 }

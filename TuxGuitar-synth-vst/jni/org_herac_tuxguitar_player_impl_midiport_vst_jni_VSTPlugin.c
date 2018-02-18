@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <audioeffectx.h>
+#include <aeffectx.h>
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VSTPluginLoader.h"
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VSTPlugin.h"
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VST.h"
@@ -15,8 +15,6 @@ JNIEXPORT jlong JNICALL Java_org_herac_tuxguitar_player_impl_midiport_vst_jni_VS
 	
 	void *library = NULL;
 	const char *libraryPath = (env)->GetStringUTFChars( str , NULL );
-	
-	JNI_GetJVM()->DetachCurrentThread();
 	
 	VSTPluginLoad( &library, libraryPath );
 	if (library != NULL) {
@@ -46,7 +44,6 @@ JNIEXPORT void JNICALL Java_org_herac_tuxguitar_player_impl_midiport_vst_jni_VST
 			VSTPluginFree( &(handle->library) );
 		}
 		free ( handle );
-		(handle) = NULL;
 	}
 }
 

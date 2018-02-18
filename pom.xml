@@ -292,12 +292,18 @@
 				<version>${project.version}</version>
 				<type>jar</type>
 			</dependency>
-			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>tuxguitar-synth-vst-remote</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>tuxguitar-ui-toolkit-swt</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
 			<!-- SWT Platforms -->
 			<dependency>
 				<groupId>${org.eclipse.swt.groupId}</groupId>
@@ -332,7 +338,7 @@
 			<dependency>
 				<groupId>${org.eclipse.swt.groupId}</groupId>
 				<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
-				<version>4.6.1</version>
+				<version>4.7</version>
 			</dependency>
 			<dependency>
 				<groupId>${org.eclipse.swt.groupId}</groupId>
@@ -358,6 +364,14 @@
 				<version>1.1.1</version>
 			</dependency>
 			<!-- /iText -->
+			
+			<!-- commons compress -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.5</version>
+			</dependency>
+			<!-- /commons compress -->
 		</dependencies>
 	</dependencyManagement>
 

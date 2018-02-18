@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.herac.tuxguitar.io.gpx.score.GPXAutomation;
 import org.herac.tuxguitar.io.gpx.score.GPXBar;
 import org.herac.tuxguitar.io.gpx.score.GPXBeat;
+import org.herac.tuxguitar.io.gpx.score.GPXChord;
 import org.herac.tuxguitar.io.gpx.score.GPXDocument;
 import org.herac.tuxguitar.io.gpx.score.GPXMasterBar;
 import org.herac.tuxguitar.io.gpx.score.GPXNote;
@@ -20,10 +21,15 @@ import org.w3c.dom.NodeList;
 
 public class GPXDocumentReader {
 	
+	public static final Integer GP6 = 6;
+	public static final Integer GP7 = 7;
+	
+	private Integer version;
 	private Document xmlDocument;
 	private GPXDocument gpxDocument;
 	
-	public GPXDocumentReader(InputStream stream){
+	public GPXDocumentReader(InputStream stream, Integer version) {
+		this.version = version;
 		this.xmlDocument = getDocument(stream);
 		this.gpxDocument = new GPXDocument();
 	}
@@ -104,17 +110,50 @@ public class GPXDocumentReader {
 					track.setId( getAttributeIntegerValue(trackNode, "id") );
 					track.setName(getChildNodeContent(trackNode, "Name" ));
 					track.setColor(getChildNodeIntegerContentArray(trackNode, "Color"));
-					Node gmNode = getChildNode(trackNode, "GeneralMidi");
-					if( gmNode != null ){
-						track.setGmProgram(getChildNodeIntegerContent(gmNode, "Program"));
-						track.setGmChannel1(getChildNodeIntegerContent(gmNode, "PrimaryChannel"));
-						track.setGmChannel2(getChildNodeIntegerContent(gmNode, "SecondaryChannel"));
+					
+					if( this.version == GP6 ) {
+						Node gmNode = getChildNode(trackNode, "GeneralMidi");
+						if( gmNode != null ){
+							track.setGmProgram(getChildNodeIntegerContent(gmNode, "Program"));
+							track.setGmChannel1(getChildNodeIntegerContent(gmNode, "PrimaryChannel"));
+							track.setGmChannel2(getChildNodeIntegerContent(gmNode, "SecondaryChannel"));
+						}
+					} else if (this.version == GP7) {
+						Node midiConnectionNode = getChildNode(trackNode, "MidiConnection");
+						if( midiConnectionNode != null ){
+							track.setGmChannel1(getChildNodeIntegerContent(midiConnectionNode, "PrimaryChannel"));
+							track.setGmChannel2(getChildNodeIntegerContent(midiConnectionNode, "SecondaryChannel"));
+						}
+						NodeList soundsNodes = getChildNodeList(trackNode, "Sounds");
+						if( soundsNodes != null ){
+							for( int s = 0 ; s < soundsNodes.getLength() ; s ++ ){
+								Node soundNode = soundsNodes.item( s );
+								if( soundNode.getNodeName().equals("Sound")) {
+									Node midiNode = getChildNode(soundNode, "MIDI");
+									if( midiNode != null ) {
+										track.setGmProgram(getChildNodeIntegerContent(midiNode, "Program"));
+									}
+								}
+							}
+						}
 					}
 					
-					NodeList propertyNodes = getChildNodeList(trackNode, "Properties");
-					if( propertyNodes != null ){
-						for( int p = 0 ; p < propertyNodes.getLength() ; p ++ ){
-							Node propertyNode = propertyNodes.item( p );
+					NodeList propertiesNode = null;
+					if( this.version == GP6 ) {
+						propertiesNode = getChildNodeList(trackNode, "Properties");
+					} else if (this.version == GP7) {
+						Node stavesNode = getChildNode(trackNode, "Staves");
+						if( stavesNode != null ) {
+							Node staffNode = getChildNode(stavesNode, "Staff");
+							if( staffNode != null ) {
+								propertiesNode = getChildNodeList(staffNode, "Properties");
+							}
+						}
+					}
+					
+					if( propertiesNode != null ){
+						for( int p = 0 ; p < propertiesNode.getLength() ; p ++ ){
+							Node propertyNode = propertiesNode.item( p );
 							if (propertyNode.getNodeName().equals("Property") ){ 
 								if( getAttributeValue(propertyNode, "name").equals("Tuning") ){
 									track.setTunningPitches( getChildNodeIntegerContentArray(propertyNode, "Pitches") );
@@ -122,7 +161,53 @@ public class GPXDocumentReader {
 							}
 						}
 					}
+					
 					this.gpxDocument.getTracks().add( track );
+					this.readChords(propertiesNode);
+				}
+			}
+		}
+	}
+	
+	public void readChords(NodeList propertiesNode) {
+		if( propertiesNode != null ){
+			for( int p = 0 ; p < propertiesNode.getLength() ; p ++ ){
+				Node propertyNode = propertiesNode.item( p );
+				if (propertyNode.getNodeName().equals("Property") ){ 
+					if( getAttributeValue(propertyNode, "name").equals("DiagramCollection") ) {
+						NodeList itemsNode = getChildNodeList(propertyNode, "Items");
+						if( itemsNode != null ) {
+							for( int i = 0 ; i < itemsNode.getLength() ; i ++ ){
+								Node itemNode = itemsNode.item( i );
+								if (itemNode.getNodeName().equals("Item")) {
+									Node diagramNode = getChildNode(itemNode, "Diagram");
+									NodeList fretsNode = getChildNodeList(itemNode, "Diagram");
+									if( diagramNode != null && fretsNode != null ) {
+										GPXChord chord = new GPXChord();
+										
+										chord.setId(getAttributeIntegerValue(itemNode, "id"));
+										chord.setName(getAttributeValue(itemNode, "name"));
+										chord.setStringCount(getAttributeIntegerValue(diagramNode, "stringCount"));
+										chord.setFretCount(getAttributeIntegerValue(diagramNode, "fretCount"));
+										chord.setBaseFret(getAttributeIntegerValue(diagramNode, "baseFret"));
+										if( chord.getFretCount() != null ) {
+											chord.setFrets(new Integer[chord.getFretCount()]);
+											for( int f = 0 ; f < fretsNode.getLength() ; f ++ ){
+												Node fretNode = fretsNode.item( f );
+												if (fretNode.getNodeName().equals("Fret")) {
+													Integer string = getAttributeIntegerValue(fretNode, "string");
+													if( string != null && string > 0 && string <= chord.getFretCount() ) {
+														chord.getFrets()[string - 1] = getAttributeIntegerValue(fretNode, "fret");
+													}
+												}
+											}
+											this.gpxDocument.getChords().add(chord);
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -205,6 +290,8 @@ public class GPXDocumentReader {
 					beat.setRhythmId(getAttributeIntegerValue(getChildNode(beatNode, "Rhythm"), "ref"));
 					beat.setTremolo( getChildNodeIntegerContentArray(beatNode, "Tremolo", "/"));
 					beat.setNoteIds( getChildNodeIntegerContentArray(beatNode, "Notes"));
+					beat.setChordId( getChildNodeIntegerContent(beatNode, "Chord", null));
+					beat.setFadding( getChildNodeContent(beatNode, "Fadding"));
 					
 					NodeList propertyNodes = getChildNodeList(beatNode, "Properties");
 					if( propertyNodes != null ){
@@ -236,6 +323,9 @@ public class GPXDocumentReader {
 								}
 								if( propertyName.equals("WhammyBarDestinationOffset") ){
 									beat.setWhammyBarDestinationOffset( new Integer(getChildNodeIntegerContent(propertyNode, "Float")) );
+								}
+								if( propertyName.equals("Brush") ){
+									beat.setBrush( getChildNodeContent(propertyNode, "Direction") );
 								}
 							}
 						}
@@ -436,10 +526,14 @@ public class GPXDocumentReader {
 	}
 	
 	private int getChildNodeIntegerContent(Node node, String name){
+		return this.getChildNodeIntegerContent(node, name, 0);
+	}
+	
+	private Integer getChildNodeIntegerContent(Node node, String name, Integer defaultValue){
 		try {
 			return new BigDecimal(this.getChildNodeContent(node, name)).intValue();
 		} catch( Throwable throwable ){
-			return 0;
+			return defaultValue;
 		}
 	}
 	

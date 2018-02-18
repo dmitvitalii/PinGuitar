@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <audioeffectx.h>
+#include <aeffectx.h>
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VSTEffect.h"
 #include "org_herac_tuxguitar_player_impl_midiport_vst_jni_VST.h"
 
@@ -21,7 +21,6 @@ JNIEXPORT jlong JNICALL Java_org_herac_tuxguitar_player_impl_midiport_vst_jni_VS
 		
 		handle->effect = effect;
 		handle->editorOpen = JNI_FALSE;
-		handle->editorHandle = NULL;
 		
 		memcpy(&jptr, &handle, sizeof( handle ));
 	}
@@ -44,7 +43,6 @@ JNIEXPORT void JNICALL Java_org_herac_tuxguitar_player_impl_midiport_vst_jni_VST
 			handle->effect = NULL;
 		}
 		free ( handle );
-		(handle) = NULL;
 	}
 }
 
