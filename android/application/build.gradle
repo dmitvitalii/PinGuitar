@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        applicationId "org.herac.tuxguitar"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        profile {
+            // Specifies a sorted list of fallback build types that the
+            // plugin should try to use when a dependency does not include a
+            // "staging" build type. You may specify as many fallbacks as you
+            // like, and the plugin selects the first build type that's
+            // available in the dependency.
+            matchingFallbacks = ['debug', 'release']
+        }
+        debug {
+            lintOptions {
+                abortOnError false
+            }
+        }
+        release {
+            minifyEnabled false
+            lintOptions {
+                abortOnError true
+            }
+        }
+    }
+}
+
+kapt {
+    generateStubs true
+}
+
+dependencies {
+    implementation "com.android.support:appcompat-v7:$supportLibrary"
+    implementation "com.android.support:design:$supportLibrary"
+
+    implementation "com.android.support:support-v4:$supportLibrary"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.mockito:mockito-core:2.8.9"
+    // Local dependencies
+    implementation project(':TuxGuitar-lib')
+    implementation project(':TuxGuitar-editor-utils')
+}
