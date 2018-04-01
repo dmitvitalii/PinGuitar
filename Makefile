@@ -10,7 +10,7 @@ PACKAGE?=tuxguitar
 
 JNI_OS?=linux
 JAVA_HOME?=/usr/lib/jvm/java-6-sun/
-JAVA_VERS?=1.4
+JAVA_VERS?=1.8
 
 ITEXT_JAR?=/usr/share/java/itext.jar
 
